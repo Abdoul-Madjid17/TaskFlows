@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js project to Azure Function App - taskflow-functions
 
 on:
@@ -10,64 +7,52 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # Root of the function app
+  NODE_VERSION: '20.x'
 
 jobs:
   build:
-    runs-on: windows-latest
-    permissions:
-      contents: read #This is required for actions/checkout
-      
+    runs-on: ubuntu-latest  # Linux recommended over Windows for speed
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: pwsh
+      - name: Install dependencies and build
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
           npm run build --if-present
           npm run test --if-present
-          popd
 
-      - name: Upload artifact for deployment job
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: node-app
           path: .
 
   deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
-      - name: Login to Azure
+
+      - name: Azure login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_353F510CCFF24BBCA5C7F651A713F16D }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E043F65C83D74EC89B9848EDA6BF005F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7943A515164F4136BBF859A46ED62DF9 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: 'Run Azure Functions Action'
+      - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
-        id: fa
         with:
-          app-name: 'taskflow-functions'
-          slot-name: 'Production'
+          app-name: taskflow-functions
+          slot-name: Production
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          
