@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { AuthState, User } from '../types';
 
-// This is a mock implementation for now
-// In a real app, this would connect to Azure Static Web Apps Authentication
+const API_BASE = '/api'; // Azure Static Web Apps proxies to Azure Functions under /api
+
 const authStore = create<AuthState & {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -13,20 +13,18 @@ const authStore = create<AuthState & {
   isLoading: false,
   error: null,
 
-  login: async (email: string, password: string) => {
+  login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      // Mock login - in real app, this would call the authentication API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user data
-      const user: User = {
-        id: '1',
-        name: 'Demo User',
-        email,
-        avatar: 'https://i.pravatar.cc/150?u=demo',
-      };
-      
+      const res = await fetch(`${API_BASE}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) throw new Error('Login failed');
+
+      const user: User = await res.json();
       set({ user, isAuthenticated: true, isLoading: false });
       localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
@@ -39,20 +37,18 @@ const authStore = create<AuthState & {
     set({ user: null, isAuthenticated: false });
   },
 
-  register: async (name: string, email: string, password: string) => {
+  register: async (name, email, password) => {
     set({ isLoading: true, error: null });
     try {
-      // Mock registration - in real app, this would call the registration API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user data
-      const user: User = {
-        id: '1',
-        name,
-        email,
-        avatar: 'https://i.pravatar.cc/150?u=demo',
-      };
-      
+      const res = await fetch(`${API_BASE}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!res.ok) throw new Error('Registration failed');
+
+      const user: User = await res.json();
       set({ user, isAuthenticated: true, isLoading: false });
       localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
