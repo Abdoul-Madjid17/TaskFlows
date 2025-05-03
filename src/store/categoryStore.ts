@@ -1,33 +1,7 @@
 import { create } from 'zustand';
 import { Category, CategoriesState } from '../types';
 
-// Mock data for now - in a real app, this would fetch from the API
-const mockCategories: Category[] = [
-  {
-    id: '1',
-    name: 'Work',
-    color: '#0ea5e9', // primary-500
-    userId: '1',
-  },
-  {
-    id: '2',
-    name: 'Personal',
-    color: '#8b5cf6', // secondary-500
-    userId: '1',
-  },
-  {
-    id: '3',
-    name: 'Learning',
-    color: '#10b981', // green-500
-    userId: '1',
-  },
-  {
-    id: '4',
-    name: 'Health',
-    color: '#ef4444', // red-500
-    userId: '1',
-  },
-];
+const API_BASE = '/api';
 
 const categoryStore = create<CategoriesState & {
   fetchCategories: () => Promise<void>;
@@ -42,9 +16,11 @@ const categoryStore = create<CategoriesState & {
   fetchCategories: async () => {
     set({ isLoading: true, error: null });
     try {
-      // Mock API call - in real app, this would fetch from the backend
-      await new Promise(resolve => setTimeout(resolve, 500));
-      set({ categories: mockCategories, isLoading: false });
+      const res = await fetch(`${API_BASE}/categories`);
+      if (!res.ok) throw new Error('Failed to fetch');
+
+      const data: Category[] = await res.json();
+      set({ categories: data, isLoading: false });
     } catch (error) {
       set({ error: 'Failed to fetch categories', isLoading: false });
     }
@@ -53,17 +29,17 @@ const categoryStore = create<CategoriesState & {
   addCategory: async (category) => {
     set({ isLoading: true, error: null });
     try {
-      // Mock API call - in real app, this would call the backend API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const newCategory: Category = {
-        ...category,
-        id: Math.random().toString(36).substring(2, 9),
-      };
-      
-      set(state => ({ 
+      const res = await fetch(`${API_BASE}/categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(category),
+      });
+      if (!res.ok) throw new Error('Failed to add');
+
+      const newCategory: Category = await res.json();
+      set((state) => ({
         categories: [...state.categories, newCategory],
-        isLoading: false 
+        isLoading: false,
       }));
     } catch (error) {
       set({ error: 'Failed to add category', isLoading: false });
@@ -73,16 +49,19 @@ const categoryStore = create<CategoriesState & {
   updateCategory: async (id, updates) => {
     set({ isLoading: true, error: null });
     try {
-      // Mock API call - in real app, this would call the backend API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      set(state => ({
-        categories: state.categories.map(category => 
-          category.id === id 
-            ? { ...category, ...updates } 
-            : category
+      const res = await fetch(`${API_BASE}/categories/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) throw new Error('Failed to update');
+
+      const updatedCategory: Category = await res.json();
+      set((state) => ({
+        categories: state.categories.map((c) =>
+          c.id === id ? updatedCategory : c
         ),
-        isLoading: false
+        isLoading: false,
       }));
     } catch (error) {
       set({ error: 'Failed to update category', isLoading: false });
@@ -92,12 +71,14 @@ const categoryStore = create<CategoriesState & {
   deleteCategory: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      // Mock API call - in real app, this would call the backend API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      set(state => ({
-        categories: state.categories.filter(category => category.id !== id),
-        isLoading: false
+      const res = await fetch(`${API_BASE}/categories/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete');
+
+      set((state) => ({
+        categories: state.categories.filter((c) => c.id !== id),
+        isLoading: false,
       }));
     } catch (error) {
       set({ error: 'Failed to delete category', isLoading: false });
