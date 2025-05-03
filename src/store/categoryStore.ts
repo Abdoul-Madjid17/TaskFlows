@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Category, CategoriesState } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = '/api/categories';
 
 const categoryStore = create<CategoriesState & {
   fetchCategories: () => Promise<void>;
@@ -16,10 +16,8 @@ const categoryStore = create<CategoriesState & {
   fetchCategories: async () => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch(`${API_BASE}/categories`);
-      if (!res.ok) throw new Error('Failed to fetch');
-
-      const data: Category[] = await res.json();
+      const res = await fetch(API_BASE);
+      const data = await res.json();
       set({ categories: data, isLoading: false });
     } catch (error) {
       set({ error: 'Failed to fetch categories', isLoading: false });
@@ -29,14 +27,12 @@ const categoryStore = create<CategoriesState & {
   addCategory: async (category) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch(`${API_BASE}/categories`, {
+      const res = await fetch(API_BASE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(category),
       });
-      if (!res.ok) throw new Error('Failed to add');
-
-      const newCategory: Category = await res.json();
+      const newCategory = await res.json();
       set((state) => ({
         categories: [...state.categories, newCategory],
         isLoading: false,
@@ -49,17 +45,15 @@ const categoryStore = create<CategoriesState & {
   updateCategory: async (id, updates) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch(`${API_BASE}/categories/${id}`, {
+      const res = await fetch(`${API_BASE}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
       });
-      if (!res.ok) throw new Error('Failed to update');
-
-      const updatedCategory: Category = await res.json();
+      const updatedCategory = await res.json();
       set((state) => ({
-        categories: state.categories.map((c) =>
-          c.id === id ? updatedCategory : c
+        categories: state.categories.map((cat) =>
+          cat.id === id ? updatedCategory : cat
         ),
         isLoading: false,
       }));
@@ -71,13 +65,9 @@ const categoryStore = create<CategoriesState & {
   deleteCategory: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch(`${API_BASE}/categories/${id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error('Failed to delete');
-
+      await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
       set((state) => ({
-        categories: state.categories.filter((c) => c.id !== id),
+        categories: state.categories.filter((cat) => cat.id !== id),
         isLoading: false,
       }));
     } catch (error) {
