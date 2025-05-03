@@ -5,7 +5,7 @@ import { CheckSquare, LogIn, Mail, Lock } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import authStore from '../store/authStore';
+import axios from 'axios';  // Import Axios for making HTTP requests
 
 interface LoginFormData {
   email: string;
@@ -14,7 +14,6 @@ interface LoginFormData {
 
 const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
-  const { login, isLoading } = authStore();
   const navigate = useNavigate();
   
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
@@ -23,12 +22,19 @@ const Login: React.FC = () => {
       password: '',
     },
   });
-  
+
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
     try {
-      await login(data.email, data.password);
-      navigate('/dashboard');
+      // Send the login request to the backend API
+      const response = await axios.post('/api/login', data);
+      
+      // If login is successful, navigate to the dashboard
+      if (response.data.token) {
+        // Store the token or any other necessary data (like user info)
+        localStorage.setItem('authToken', response.data.token);
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError('Invalid email or password');
     }
@@ -86,7 +92,7 @@ const Login: React.FC = () => {
             <Button
               type="submit"
               fullWidth
-              isLoading={isLoading}
+              isLoading={false} // Set to true while request is being made
               leftIcon={<LogIn size={18} />}
             >
               Sign In
