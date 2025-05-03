@@ -30,20 +30,4 @@ jobs:
           api_location: "api" # Api source code path - optional
           output_location: "dist" # Built app content directory - optional
 
-  deploy_azure_functions:
-    runs-on: ubuntu-latest
-    name: Deploy Azure Functions
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Azure Functions
-        uses: azure/functions-action@v1
-        with:
-          app-name: <taskflow-functions>  # Replace with your Azure Function app name
-          package: 'api' # Path to your Azure Function folder (make sure it's the correct folder for your functions)
-
-      - name: Publish Azure Functions
-        run: |
-          npm install -g azure-functions-core-tools@3 # Install Azure Functions tools
-          func azure functionapp publish <taskflow-functions> --python # Deploy function app
+  
