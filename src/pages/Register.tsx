@@ -5,7 +5,7 @@ import { CheckSquare, UserPlus, Mail, Lock, User } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import authStore from '../store/authStore';
+import axios from 'axios';  // Import Axios for making HTTP requests
 
 interface RegisterFormData {
   name: string;
@@ -16,7 +16,6 @@ interface RegisterFormData {
 
 const Register: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
-  const { register: registerUser, isLoading } = authStore();
   const navigate = useNavigate();
   
   const { register, handleSubmit, formState: { errors }, watch } = useForm<RegisterFormData>({
@@ -33,8 +32,13 @@ const Register: React.FC = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setError(null);
     try {
-      await registerUser(data.name, data.email, data.password);
-      navigate('/dashboard');
+      // Send the registration request to the backend API
+      const response = await axios.post('/api/register', data);
+      
+      // If registration is successful, navigate to the login page
+      if (response.data.message === 'User created') {
+        navigate('/login');
+      }
     } catch (err) {
       setError('Registration failed. Please try again.');
     }
@@ -114,7 +118,7 @@ const Register: React.FC = () => {
             <Button
               type="submit"
               fullWidth
-              isLoading={isLoading}
+              isLoading={false} // Set to true while request is being made
               leftIcon={<UserPlus size={18} />}
             >
               Create Account
