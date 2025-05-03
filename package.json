@@ -47,5 +47,7 @@
   },
   "scripts": {
     "start": "func start"
+    "build": "react-scripts build"
+
   }
 }
