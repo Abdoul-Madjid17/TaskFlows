@@ -38,3 +38,14 @@
     "vite": "^5.4.2"
   }
 }
+
+{
+  "name": "getTasks-function",
+  "version": "1.0.0",
+  "dependencies": {
+    "mongodb": "^4.0.0"
+  },
+  "scripts": {
+    "start": "func start"
+  }
+}
