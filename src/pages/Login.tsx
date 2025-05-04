@@ -42,7 +42,7 @@ const Login: React.FC = () => {
             <CheckSquare className="h-12 w-12 text-primary-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-gray-600">Sign in to your TaskFlow account</p>
+          <p className="mt-2 text-gray-600">Sign in to your WorkSync account</p>
         </div>
         
         <div className="bg-white p-8 rounded-lg shadow-md">
