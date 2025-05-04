@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
               <CheckSquare className="h-8 w-8 text-primary-600" />
-              <span className="ml-2 text-xl font-heading font-bold text-gray-900">TaskFlow</span>
+              <span className="ml-2 text-xl font-heading font-bold text-gray-900">WorkSync</span>
             </Link>
           </div>
 
