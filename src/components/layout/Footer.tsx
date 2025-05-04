@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
           </div>
           <div className="mt-4 md:mt-0">
             <p className="text-center text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} TaskFlow. All rights reserved.
+              &copy; {new Date().getFullYear()} WorkSync. All rights reserved.
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex space-x-6">
