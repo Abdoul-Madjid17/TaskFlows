@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex items-center">
             <CheckSquare className="h-6 w-6 text-primary-600" />
-            <span className="ml-2 text-lg font-heading font-bold text-gray-900">TaskFlow</span>
+            <span className="ml-2 text-lg font-heading font-bold text-gray-900">WorkSync</span>
           </div>
           <div className="mt-4 md:mt-0">
             <p className="text-center text-sm text-gray-500">
