@@ -48,7 +48,7 @@ const Register: React.FC = () => {
             <CheckSquare className="h-12 w-12 text-primary-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Create an account</h1>
-          <p className="mt-2 text-gray-600">Join TaskFlow to manage your tasks efficiently</p>
+          <p className="mt-2 text-gray-600">Join WorkSync to manage your tasks efficiently</p>
         </div>
         
         <div className="bg-white p-8 rounded-lg shadow-md">
