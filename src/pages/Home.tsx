@@ -11,7 +11,7 @@ const Home: React.FC = () => {
       <section className="py-12 md:py-20">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Manage Your Tasks with <span className="text-primary-600">TaskFlow</span>
+            Manage Your Tasks with <span className="text-primary-600">WorkSync</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8">
             A modern task management application designed for teams and individuals.
